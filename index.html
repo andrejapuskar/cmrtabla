@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Moja CRM tabla</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>[hidden]{display:none!important}body{margin:0}*,*::before,*::after{box-sizing:border-box}img{max-width:100%}</style>
+<style>
+/* Layout: quiet ledger. Hairline-ruled app bar and figures row, borderless lanes separated by space, paper cards with a thin tone mark. */
+:root{
+  --bg:#f6f6f4; --lane:transparent; --surface:#ffffff; --raised:#ffffff; --fg:#1c1d1f; --muted:#6e7073; --faint:#a3a5a8;
+  --line:#e4e4e1; --line-strong:#d2d2ce;
+  --accent:#2e3b36; --accent-soft:#eceeec; --accent-fg:#f6f6f4;
+  --danger:#9c4a3f; --danger-soft:#f4ebe9; --ok:#5d7a68; --warn:#9a7b45;
+  --l-sun:#c8b48a; --l-mint:#93a99a; --l-sky:#8fa1b3; --l-rose:#c29a95; --l-lilac:#a69eb5;
+  --s1:#b9b9b4; --s2:#8fa1b3; --s3:#c8b48a; --s4:#93a99a; --s5:#c29a95; --s6:#a69eb5;
+  --shadow-card:none;
+  --shadow-hover:0 2px 10px rgba(28,29,31,.05);
+  --shadow-pop:0 20px 60px rgba(28,29,31,.16);
+  --f-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --f-body:"Hanken Grotesk",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141515; --lane:transparent; --surface:#1b1c1d; --raised:#1e1f20; --fg:#e8e7e3; --muted:#9a9b9a; --faint:#646665;
+  --line:#2a2b2c; --line-strong:#38393a;
+  --accent:#c9d3cc; --accent-soft:#232625; --accent-fg:#141515;
+  --danger:#d08b80; --danger-soft:#2b1f1d; --ok:#8fae9a; --warn:#c9a96f;
+  --l-sun:#a8976f; --l-mint:#7c9283; --l-sky:#7a8b9c; --l-rose:#a3807b; --l-lilac:#8c859b;
+  --s1:#5d5f5e; --s2:#7a8b9c; --s3:#a8976f; --s4:#7c9283; --s5:#a3807b; --s6:#8c859b;
+  --shadow-card:none; --shadow-hover:0 2px 12px rgba(0,0,0,.3); --shadow-pop:0 20px 60px rgba(0,0,0,.55);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141515; --lane:transparent; --surface:#1b1c1d; --raised:#1e1f20; --fg:#e8e7e3; --muted:#9a9b9a; --faint:#646665;
+  --line:#2a2b2c; --line-strong:#38393a;
+  --accent:#c9d3cc; --accent-soft:#232625; --accent-fg:#141515;
+  --danger:#d08b80; --danger-soft:#2b1f1d; --ok:#8fae9a; --warn:#c9a96f;
+  --l-sun:#a8976f; --l-mint:#7c9283; --l-sky:#7a8b9c; --l-rose:#a3807b; --l-lilac:#8c859b;
+  --s1:#5d5f5e; --s2:#7a8b9c; --s3:#a8976f; --s4:#7c9283; --s5:#a3807b; --s6:#8c859b;
+  --shadow-card:none; --shadow-hover:0 2px 12px rgba(0,0,0,.3); --shadow-pop:0 20px 60px rgba(0,0,0,.55);
+  color-scheme:dark}
+
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font:14px/1.5 var(--f-body);display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:1.5px solid var(--accent);outline-offset:2px}
+svg.i{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+::selection{background:var(--accent-soft)}
+
+/* ---- app bar ---- */
+.app-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;border-bottom:1px solid var(--line);
+  padding-block:18px 16px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+@media (max-width:600px){.app-bar,.kpis,.board{padding-left:max(16px,env(safe-area-inset-left,0px))!important;padding-right:max(16px,env(safe-area-inset-right,0px))!important}}
+.mark{display:none}
+.title-block{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 220px}
+.title-row{display:flex;align-items:center;gap:2px;min-width:0}
+.board-title{font:500 1.6rem/1.15 var(--f-display);letter-spacing:-.01em;background:transparent;border:0;border-bottom:1px solid transparent;border-radius:0;padding:1px 0;min-width:4ch;width:min(440px,100%);field-sizing:content;max-width:100%}
+.board-title:hover{border-bottom-color:var(--line-strong)}
+.board-title:focus{border-bottom-color:var(--accent);outline:none}
+.sync{font-size:.74rem;color:var(--faint);display:inline-flex;align-items:center;gap:7px;letter-spacing:.01em}
+.sync::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--ok)}
+.sync.busy::before{background:var(--warn)}
+.sync.local::before{background:var(--danger)}
+.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.search{position:relative;display:flex;align-items:center}
+.search svg{position:absolute;left:0;color:var(--faint)}
+.search input{background:transparent;border:0;border-bottom:1px solid var(--line-strong);border-radius:0;padding:7px 4px 7px 22px;width:min(240px,62vw)}
+.search input::placeholder{color:var(--faint)}
+.search input:focus{outline:none;border-bottom-color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line-strong);background:transparent;border-radius:999px;padding:7px 16px;font-weight:500;font-size:.86rem}
+.btn:hover{border-color:var(--fg)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn.primary:hover{opacity:.9}
+.btn.danger{color:var(--danger);border-color:transparent;padding-inline:4px}
+.btn.danger:hover{text-decoration:underline;text-underline-offset:3px}
+.btn.danger.armed{background:var(--danger);color:var(--surface);padding-inline:14px;text-decoration:none}
+
+/* ---- figures row ---- */
+.kpis{display:flex;flex-wrap:wrap;gap:10px 40px;border-bottom:1px solid var(--line);
+  padding-block:14px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.kpi{display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi .k{font-size:.66rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.kpi .v{font:400 1rem/1.2 var(--f-mono);font-variant-numeric:tabular-nums;color:var(--fg)}
+.kpi.alert .v{color:var(--danger)}
+.kpi.soon .v{color:var(--warn)}
+
+/* ---- board ---- */
+.board{flex:1;min-height:0;display:flex;gap:28px;align-items:flex-start;overflow-x:auto;overflow-y:hidden;
+  padding-block:22px 22px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.lane{flex:0 0 280px;max-height:100%;display:flex;flex-direction:column;background:var(--lane)}
+@media (max-width:480px){.lane{flex-basis:84vw}.board{gap:20px}}
+.lane-head{display:flex;align-items:center;gap:4px;padding:0 0 6px;border-bottom:1px solid var(--line-strong)}
+.dot{width:6px;height:6px;border-radius:50%;flex:none;background:var(--s1);margin-right:6px}
+.lane-title{flex:1;min-width:0;background:transparent;border:0;border-radius:0;padding:2px 0;
+  font:600 .74rem/1.2 var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--fg)}
+.lane-title:focus{outline:none;text-transform:none;letter-spacing:0;font-size:.9rem}
+.count{font:400 .72rem var(--f-mono);color:var(--faint);padding:0 4px;font-variant-numeric:tabular-nums}
+.icon-btn{border:0;background:transparent;border-radius:50%;width:26px;height:26px;display:grid;place-items:center;color:var(--faint);flex:none}
+.icon-btn:hover{color:var(--fg);background:var(--accent-soft)}
+.icon-btn.armed{background:var(--danger);color:var(--surface)}
+.lane-head .lane-del,.lane-head .emo-btn{opacity:0;transition:opacity .15s}
+.lane:hover .lane-del,.lane:hover .lane-head .emo-btn,.lane-head :focus-visible{opacity:1}
+@media (hover:none){.lane-head .lane-del,.lane-head .emo-btn{opacity:1}}
+.lane-sum{padding:8px 0 4px;font:400 .72rem var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums;min-height:6px}
+.list{flex:1;min-height:44px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:6px 2px 10px}
+.empty{font-size:.8rem;color:var(--faint);border:1px dashed var(--line-strong);border-radius:4px;padding:18px 10px;text-align:center}
+.lane-foot{display:flex;align-items:center;gap:2px}
+.add-card{flex:1;display:flex;align-items:center;gap:7px;border:0;background:transparent;text-align:left;padding:6px 0;color:var(--faint);font-weight:500;font-size:.84rem}
+.add-card:hover{color:var(--fg)}
+.lane-mv{width:24px;height:24px;font-size:1rem;opacity:0}
+.lane:hover .lane-mv,.lane-mv:focus-visible{opacity:1}
+@media (hover:none){.lane-mv{opacity:1}}
+.add-lane{flex:0 0 200px;display:flex;align-items:center;gap:8px;border:0;border-bottom:1px dashed var(--line-strong);background:transparent;padding:2px 0 8px;color:var(--faint);font-weight:500;font-size:.84rem}
+.add-lane:hover{color:var(--fg);border-bottom-color:var(--fg)}
+
+/* ---- cards ---- */
+.card{position:relative;background:var(--raised);border:1px solid var(--line);border-radius:4px;padding:14px 14px 13px 16px;box-shadow:var(--shadow-card);cursor:grab;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.card:hover{border-color:var(--line-strong);box-shadow:var(--shadow-hover)}
+.label{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:0;background:transparent}
+.label[data-c="sun"]{background:var(--l-sun)}.label[data-c="mint"]{background:var(--l-mint)}.label[data-c="sky"]{background:var(--l-sky)}
+.label[data-c="rose"]{background:var(--l-rose)}.label[data-c="lilac"]{background:var(--l-lilac)}
+.card-top{display:flex;align-items:flex-start;gap:10px;min-width:0}
+.avatar{display:none}
+.who{min-width:0;flex:1;padding-right:18px}
+.card h3{margin:0;font:500 1.02rem/1.3 var(--f-display);letter-spacing:-.005em;overflow-wrap:anywhere}
+.card .co{font-size:.78rem;color:var(--muted);overflow-wrap:anywhere;margin-top:1px}
+.card .note{font-size:.82rem;line-height:1.5;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;font-size:.74rem;color:var(--muted);padding-top:8px;border-top:1px solid var(--line)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-variant-numeric:tabular-nums}
+.chip svg.i{width:12px;height:12px;color:var(--faint)}
+.chip.money{font:500 .74rem var(--f-mono);color:var(--fg)}
+.chip.late{color:var(--danger);font-weight:600}
+.chip.late svg.i{color:var(--danger)}
+.chip.soon{color:var(--warn);font-weight:600}
+.grip{position:absolute;top:10px;right:8px;width:22px;height:22px;display:grid;place-items:center;color:var(--faint);touch-action:none;cursor:grab;border-radius:3px;font-size:.85rem;opacity:0}
+.card:hover .grip{opacity:1}
+@media (hover:none){.grip{opacity:.7}}
+.card.ghost{position:fixed;z-index:50;pointer-events:none;transform:rotate(1.5deg);box-shadow:0 16px 40px rgba(0,0,0,.14);cursor:grabbing}
+.placeholder{border-radius:4px;background:var(--accent-soft);border:1px dashed var(--line-strong)}
+.hidden-src{display:none!important}
+.dim{opacity:.25}
+
+/* ---- dialog ---- */
+dialog{border:1px solid var(--line);border-radius:6px;padding:0;background:var(--surface);color:var(--fg);width:min(540px,calc(100vw - 24px));max-height:calc(100dvh - 24px);box-shadow:var(--shadow-pop)}
+dialog::backdrop{background:rgba(20,21,21,.38);backdrop-filter:blur(2px)}
+.dlg{display:flex;flex-direction:column}
+.dlg-head{display:flex;align-items:center;gap:10px;padding:22px 24px 6px}
+.dlg-head h2{margin:0;flex:1;font:500 1.35rem var(--f-display);letter-spacing:-.01em}
+.dlg-body{display:flex;flex-direction:column;gap:16px;padding:12px 24px 22px;overflow-y:auto}
+.sec{font-size:.64rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);padding-top:6px;margin-bottom:-6px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:480px){.row{grid-template-columns:1fr}.dlg-head{padding-inline:18px}.dlg-body{padding-inline:18px}.dlg-actions{padding-inline:18px!important}}
+label{display:flex;flex-direction:column;gap:4px;font-size:.74rem;font-weight:500;color:var(--muted);min-width:0}
+.fld{border:0;border-bottom:1px solid var(--line-strong);background:transparent;border-radius:0;padding:7px 0;font-size:.95rem;font-weight:400;color:var(--fg);min-width:0;width:100%}
+.fld:focus{outline:none;border-bottom-color:var(--accent)}
+select.fld{padding-right:4px}
+textarea.fld{min-height:96px;resize:vertical;border:1px solid var(--line-strong);border-radius:4px;padding:9px 10px}
+textarea.fld:focus{border-color:var(--accent)}
+.fwrap{display:flex;gap:6px;align-items:flex-end}
+.fwrap .fld{flex:1}
+.fwrap .emo-btn{flex:0 0 32px;height:32px;border:0;background:transparent;border-radius:50%;display:grid;place-items:center;font-size:1rem}
+.fwrap .emo-btn:hover{background:var(--accent-soft)}
+.swatches{display:flex;gap:6px;flex-wrap:wrap}
+.sw{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:transparent;border-radius:999px;padding:4px 11px 4px 7px;font-size:.76rem;font-weight:500;color:var(--muted)}
+.sw::before{content:"";width:10px;height:10px;border-radius:50%;background:transparent;border:1px solid var(--line-strong)}
+.sw[data-c="sun"]::before{background:var(--l-sun);border:0}.sw[data-c="mint"]::before{background:var(--l-mint);border:0}.sw[data-c="sky"]::before{background:var(--l-sky);border:0}
+.sw[data-c="rose"]::before{background:var(--l-rose);border:0}.sw[data-c="lilac"]::before{background:var(--l-lilac);border:0}
+.sw[aria-pressed="true"]{border-color:var(--fg);color:var(--fg)}
+.dlg-actions{display:flex;gap:8px;justify-content:flex-end;align-items:center;flex-wrap:wrap;padding:14px 24px;border-top:1px solid var(--line)}
+.dlg-actions .spacer{margin-right:auto}
+
+/* ---- emoji popover ---- */
+.emo-btn{font-size:.95rem;filter:grayscale(1);opacity:.55}
+.emo-btn:hover{filter:none;opacity:1}
+.emo-pop{position:fixed;z-index:80;width:min(340px,calc(100vw - 24px));background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow-pop);padding:8px}
+.emo-tabs{display:flex;gap:2px;overflow-x:auto;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.emo-tab{flex:0 0 auto;border:0;background:transparent;border-radius:999px;padding:3px 10px;font-size:.74rem;font-weight:500;color:var(--muted)}
+.emo-tab[aria-selected="true"]{background:var(--accent);color:var(--accent-fg)}
+.emojis{display:flex;flex-wrap:wrap;gap:2px;max-height:220px;overflow-y:auto}
+.emo{border:0;background:transparent;border-radius:4px;width:36px;height:36px;font-size:1.2rem;line-height:1;display:grid;place-items:center}
+.emo:hover{background:var(--accent-soft)}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:.82rem;font-weight:500;z-index:90}
+@media (prefers-reduced-motion:no-preference){.card{transition:box-shadow .2s,border-color .2s}.toast{animation:up .2s ease-out}@keyframes up{from{transform:translate(-50%,6px);opacity:0}}}
+</style>
+</head>
+<body>
+<header class="app-bar">
+  <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/></svg></div>
+  <div class="title-block">
+    <div class="title-row"><input id="boardTitle" class="board-title" value="Moja CRM tabla" maxlength="80" aria-label="Naziv table"><button type="button" class="icon-btn emo-btn" data-for="boardTitle" title="Dodaj smajli" aria-label="Dodaj smajli">😊</button></div>
+    <span id="sync" class="sync busy">Učitavanje…</span>
+  </div>
+  <div class="tools">
+    <label class="search" aria-label="Pretraga"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Pretraži klijente i beleške"></label>
+    <button id="newCard" class="btn primary" type="button">Nova kartica</button>
+  </div>
+</header>
+<section class="kpis" id="kpis" aria-label="Pregled"></section>
+<main id="board" class="board" aria-label="Tabla"></main>
+
+<dialog id="dlg">
+  <form class="dlg" id="form">
+    <div class="dlg-head"><h2 id="dlgTitle">Nova kartica</h2><button type="button" class="icon-btn" id="x" aria-label="Zatvori"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="dlg-body">
+      <div class="sec">Klijent</div>
+      <label>Ime / naslov<span class="fwrap"><input id="f-title" class="fld" required maxlength="120" placeholder="npr. Marko Petrović"><button type="button" class="emo-btn" data-for="f-title" title="Dodaj smajli" aria-label="Dodaj smajli">😊</button></span></label>
+      <div class="row">
+        <label>Firma<span class="fwrap"><input id="f-company" class="fld" maxlength="120"><button type="button" class="emo-btn" data-for="f-company" title="Dodaj smajli" aria-label="Dodaj smajli">😊</button></span></label>
+        <label>Faza<select id="f-col" class="fld"></select></label>
+      </div>
+      <div class="row">
+        <label>Telefon<input id="f-phone" class="fld" inputmode="tel" maxlength="40" placeholder="06x xxx xxxx"></label>
+        <label>Email<input id="f-email" class="fld" type="email" maxlength="120"></label>
+      </div>
+      <div class="sec">Posao</div>
+      <div class="row">
+        <label>Vrednost (RSD)<input id="f-value" class="fld" inputmode="numeric" placeholder="npr. 150000"></label>
+        <label>Sledeći kontakt / rok<input id="f-due" class="fld" type="date"></label>
+      </div>
+      <label>Beleška<span class="fwrap"><textarea id="f-note" class="fld" maxlength="4000" placeholder="Šta je dogovoreno, šta je sledeći korak…"></textarea><button type="button" class="emo-btn" data-for="f-note" title="Dodaj smajli" aria-label="Dodaj smajli">😊</button></span></label>
+      <div><div style="font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:6px">Oznaka</div><div class="swatches" id="sw"></div></div>
+    </div>
+    <div class="dlg-actions">
+      <button type="button" id="del" class="btn danger spacer">Obriši karticu</button>
+      <button type="button" id="cancel" class="btn">Otkaži</button>
+      <button type="submit" class="btn primary">Sačuvaj</button>
+    </div>
+  </form>
+</dialog>
+<div id="toast" class="toast" hidden></div>
+<div id="emoPop" class="emo-pop" hidden><div class="emo-tabs" id="emoTabs" role="tablist"></div><div class="emojis" id="emo"></div></div>
+
+<script>
+const COLORS=[["sun","Žuta"],["mint","Zelena"],["sky","Plava"],["rose","Crvena"],["lilac","Ljubičasta"],["paper","Bez oznake"]];
+const DEFAULT={title:"Moja CRM tabla",columns:[
+  {id:"c-novi",title:"Novi kontakti"},{id:"c-razg",title:"U razgovoru"},
+  {id:"c-pon",title:"Ponuda poslata"},{id:"c-dob",title:"Dobijeno"},{id:"c-izg",title:"Izgubljeno"}],cards:[]};
+let state=structuredClone(DEFAULT);
+let ref=null, mode="loading", writing=false, dirty=false, saveTimer=null, remotePending=null, readOnly=false;
+const $=s=>document.querySelector(s);
+const uid=p=>p+"-"+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const fmtNum=n=>new Intl.NumberFormat("sr-Latn-RS").format(n);
+const fmtRSD=n=>fmtNum(n)+" RSD";
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const today=()=>iso(new Date());
+const inDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
+const fmtDate=d=>{const [y,m,dd]=d.split("-");return `${+dd}.${+m}.${y}.`};
+const STATUS=["--s1","--s2","--s3","--s4","--s5","--s6"];
+const I={
+  cal:'<svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  phone:'<svg class="i" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
+  mail:'<svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+  plus:'<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  trash:'<svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>'
+};
+function initials(t){const w=String(t||"").replace(/^primer:\s*/i,"").match(/\p{L}[\p{L}\p{M}]*/gu)||[];return ((w[0]?.[0]||"?")+(w[1]?.[0]||"")).toUpperCase()}
+
+function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2200)}
+function setSync(text,cls){const s=$("#sync");s.textContent=text;s.className="sync "+(cls||"")}
+
+/* ---------- persistence ---------- */
+function normalize(d){
+  const s={rev:+d?.rev||0,title:typeof d?.title==="string"&&d.title.trim()?d.title:"Moja CRM tabla",columns:Array.isArray(d?.columns)?d.columns.filter(c=>c&&c.id):[],cards:Array.isArray(d?.cards)?d.cards.filter(c=>c&&c.id):[]};
+  if(!s.columns.length) s.columns=structuredClone(DEFAULT.columns);
+  const ids=new Set(s.columns.map(c=>c.id));
+  s.cards.forEach(c=>{if(!ids.has(c.col)) c.col=s.columns[0].id});
+  return s;
+}
+function save(quiet){
+  if(readOnly){toast("Nemaš dozvolu za izmene na ovoj tabli.");return}
+  state.rev=(+state.rev||0)+1;
+  dirty=true; if(!quiet) render(); else renderKpis();
+  if(mode==="local"){try{localStorage.setItem("crm-tabla",JSON.stringify(state))}catch(e){} dirty=false; return}
+  setSync("Čuva se…","busy");
+  clearTimeout(saveTimer); saveTimer=setTimeout(flush,500);
+}
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&dirty&&ref){clearTimeout(saveTimer);flush()}});
+window.addEventListener("beforeunload",e=>{if((dirty||writing)&&ref){clearTimeout(saveTimer);flush();e.preventDefault();e.returnValue=""}});
+async function flush(){
+  if(!ref) return;
+  if(writing){saveTimer=setTimeout(flush,300);return}
+  writing=true; dirty=false;
+  try{
+    await ref.set(JSON.parse(JSON.stringify(state)));
+    if(!dirty) setSync("Sve izmene su sačuvane");
+  }catch(e){
+    if(e?.code==="invalid_argument"){readOnly=true;setSync("Samo za čitanje","local")}
+    else if(e?.code==="unavailable"){dirty=true;setTimeout(flush,800+Math.random()*800)}
+    else {setSync("Izmena nije sačuvana","local");toast("Izmena nije sačuvana. Proveri vezu i pokušaj ponovo.")}
+  }finally{writing=false}
+}
+function applyRemote(data){
+  if(dirty||writing) return;
+  if((+data?.rev||0)<(+state.rev||0)) return;
+  if(drag||$("#dlg").open||editingTitle()){remotePending=data;return}
+  state=normalize(data); render();
+}
+async function init(){
+  render();
+  let db=null;
+  try{db=window.claude?.use?await window.claude.use("db"):null}catch(e){db=null}
+  if(!db){
+    mode="local";
+    try{const raw=localStorage.getItem("crm-tabla");if(raw) state=normalize(JSON.parse(raw))}catch(e){}
+    setSync("Sačuvano u ovom pregledaču"); render(); return;
+  }
+  mode="db"; ref=db.doc("boards/main");
+  ref.onSnapshot(snap=>{
+    if(snap.exists) applyRemote(snap.data());
+    if(!dirty&&!writing) setSync(snap.exists?"Sve izmene su sačuvane":"Prazna tabla");
+  },()=>setSync("Veza prekinuta, osveži stranicu","local"));
+}
+
+/* ---------- render ---------- */
+function matches(c,q){if(!q) return true;return [c.title,c.company,c.note,c.phone,c.email].join(" ").toLowerCase().includes(q)}
+function editingTitle(){const a=document.activeElement;return !!a&&(a.id==="boardTitle"||a.classList?.contains("lane-title"))}
+function renderKpis(){
+  const t=today(), wk=inDays(7);
+  const total=state.cards.reduce((a,c)=>a+(+c.value||0),0);
+  const late=state.cards.filter(c=>c.due&&c.due<t).length;
+  const soon=state.cards.filter(c=>c.due&&c.due>=t&&c.due<=wk).length;
+  const won=state.cards.filter(c=>c.col==="c-dob").reduce((a,c)=>a+(+c.value||0),0);
+  const hasWon=state.columns.some(c=>c.id==="c-dob");
+  $("#kpis").innerHTML=
+    `<div class="kpi"><span class="k">Klijenti</span><span class="v">${state.cards.length}</span></div>
+     <div class="kpi"><span class="k">Ukupna vrednost</span><span class="v">${fmtRSD(total)}</span></div>
+     ${hasWon?`<div class="kpi"><span class="k">Dobijeno</span><span class="v">${fmtRSD(won)}</span></div>`:""}
+     <div class="kpi ${soon?"soon":""}"><span class="k">Kontakt u 7 dana</span><span class="v">${soon}</span></div>
+     <div class="kpi ${late?"alert":""}"><span class="k">Kasni</span><span class="v">${late}</span></div>`;
+}
+function render(){
+  const bt=$("#boardTitle"); if(document.activeElement!==bt) bt.value=state.title||"Moja CRM tabla";
+  const q=$("#q").value.trim().toLowerCase();
+  const b=$("#board"); const sx=b.scrollLeft;
+  const scrolls={}; b.querySelectorAll(".list").forEach(l=>scrolls[l.dataset.col]=l.scrollTop);
+  let html="";
+  state.columns.forEach((col,i)=>{
+    const cards=state.cards.filter(c=>c.col===col.id);
+    const sum=cards.reduce((a,c)=>a+(+c.value||0),0);
+    html+=`<section class="lane" data-col="${col.id}">
+      <div class="lane-head">
+        <span class="dot" style="background:var(${STATUS[i%STATUS.length]})"></span>
+        <input class="lane-title" data-col="${col.id}" value="${esc(col.title)}" aria-label="Naziv kolone" maxlength="60" ${readOnly?"readonly":""}>
+        <button class="icon-btn emo-btn" data-col="${col.id}" type="button" title="Dodaj smajli" aria-label="Dodaj smajli u naziv">😊</button>
+        <span class="count">${cards.length}</span>
+        <button class="icon-btn lane-del" data-col="${col.id}" type="button" title="Obriši kolonu" aria-label="Obriši kolonu">${I.trash}</button>
+      </div>
+      <div class="lane-sum">${sum?fmtRSD(sum):""}</div>
+      <div class="list" data-col="${col.id}">
+        ${cards.length?cards.map(c=>cardHTML(c,q)).join(""):`<div class="empty">Prazno</div>`}
+      </div>
+      <div class="lane-foot"><button class="add-card" data-col="${col.id}" type="button">${I.plus}Dodaj karticu</button>
+        <button class="icon-btn lane-mv" data-col="${col.id}" data-d="-1" type="button" title="Pomeri kolonu levo" aria-label="Pomeri kolonu levo">‹</button>
+        <button class="icon-btn lane-mv" data-col="${col.id}" data-d="1" type="button" title="Pomeri kolonu desno" aria-label="Pomeri kolonu desno">›</button></div>
+    </section>`;
+  });
+  html+=`<button class="add-lane" id="addLane" type="button">${I.plus}Nova kolona</button>`;
+  b.innerHTML=html; b.scrollLeft=sx;
+  b.querySelectorAll(".list").forEach(l=>{if(scrolls[l.dataset.col]) l.scrollTop=scrolls[l.dataset.col]});
+  renderKpis();
+}
+function cardHTML(c,q){
+  const t=today(), late=c.due&&c.due<t, soon=c.due&&!late&&c.due<=inDays(2);
+  const meta=[];
+  if(+c.value) meta.push(`<span class="chip money">${fmtRSD(+c.value)}</span>`);
+  if(c.due) meta.push(`<span class="chip ${late?"late":soon?"soon":""}">${I.cal}${late?"Kasni · ":c.due===t?"Danas · ":""}${fmtDate(c.due)}</span>`);
+  if(c.phone) meta.push(`<span class="chip">${I.phone}${esc(c.phone)}</span>`);
+  else if(c.email) meta.push(`<span class="chip">${I.mail}${esc(c.email)}</span>`);
+  const col=c.color&&c.color!=="paper"?c.color:null;
+  return `<article class="card ${matches(c,q)?"":"dim"}" data-id="${c.id}" tabindex="0">
+    <span class="grip" aria-hidden="true">⠿</span>
+    ${col?`<span class="label" data-c="${col}"></span>`:""}
+    <div class="card-top"><span class="avatar">${esc(initials(c.title))}</span>
+      <div class="who"><h3>${esc(c.title)}</h3>${c.company?`<div class="co">${esc(c.company)}</div>`:""}</div></div>
+    ${c.note?`<div class="note">${esc(c.note)}</div>`:""}
+    ${meta.length?`<div class="meta">${meta.join("")}</div>`:""}
+  </article>`;
+}
+
+/* ---------- drag & drop ---------- */
+let drag=null, press=null, suppressClick=false;
+const board=$("#board");
+board.addEventListener("pointerdown",e=>{
+  const card=e.target.closest(".card"); if(!card||e.button>0||readOnly) return;
+  if(e.pointerType!=="mouse"&&!e.target.closest(".grip")) return;
+  press={id:card.dataset.id,el:card,x:e.clientX,y:e.clientY,pid:e.pointerId};
+  if(e.pointerType!=="mouse") e.preventDefault();
+});
+window.addEventListener("pointermove",e=>{
+  if(press&&!drag&&e.pointerId===press.pid&&Math.hypot(e.clientX-press.x,e.clientY-press.y)>5) startDrag(e);
+  if(drag) moveDrag(e);
+});
+window.addEventListener("pointerup",()=>{ if(drag) endDrag(true); press=null; });
+window.addEventListener("pointercancel",()=>{ if(drag) endDrag(false); press=null; });
+function startDrag(e){
+  const el=press.el, r=el.getBoundingClientRect();
+  const ghost=el.cloneNode(true); ghost.classList.add("ghost"); ghost.style.width=r.width+"px";
+  document.body.appendChild(ghost);
+  const ph=document.createElement("div"); ph.className="placeholder"; ph.style.height=r.height+"px";
+  el.after(ph); el.classList.add("hidden-src");
+  drag={id:press.id,el,ghost,ph,dx:press.x-r.left,dy:press.y-r.top};
+  document.body.style.cursor="grabbing";
+  moveDrag(e);
+}
+function moveDrag(e){
+  const {ghost,ph}=drag;
+  ghost.style.left=(e.clientX-drag.dx)+"px"; ghost.style.top=(e.clientY-drag.dy)+"px";
+  const lane=document.elementFromPoint(e.clientX,e.clientY)?.closest(".lane"); if(!lane){autoScroll(e);return}
+  const list=lane.querySelector(".list");
+  list.querySelector(".empty")?.remove();
+  let before=null;
+  for(const s of list.querySelectorAll(".card:not(.hidden-src)")){const r=s.getBoundingClientRect(); if(e.clientY<r.top+r.height/2){before=s;break}}
+  if(before){ if(ph.nextSibling!==before) list.insertBefore(ph,before) } else if(list.lastElementChild!==ph) list.appendChild(ph);
+  autoScroll(e);
+}
+function autoScroll(e){
+  const r=board.getBoundingClientRect();
+  if(e.clientX>r.right-50) board.scrollLeft+=14; else if(e.clientX<r.left+50) board.scrollLeft-=14;
+  const list=drag.ph.parentElement; if(list){const lr=list.getBoundingClientRect();
+    if(e.clientY>lr.bottom-40) list.scrollTop+=10; else if(e.clientY<lr.top+40) list.scrollTop-=10;}
+}
+function endDrag(commit){
+  const {id,ghost,ph}=drag; ghost.remove(); document.body.style.cursor="";
+  if(commit&&ph.parentElement){
+    const col=ph.parentElement.dataset.col;
+    const nextCard=ph.nextElementSibling?.closest?.(".card");
+    const card=state.cards.find(c=>c.id===id);
+    const moved=card.col!==col;
+    state.cards=state.cards.filter(c=>c.id!==id); card.col=col;
+    const idx=nextCard?state.cards.findIndex(c=>c.id===nextCard.dataset.id):-1;
+    if(idx<0){let last=-1; state.cards.forEach((c,i)=>{if(c.col===col) last=i}); state.cards.splice(last<0?state.cards.length:last+1,0,card)}
+    else state.cards.splice(idx,0,card);
+    drag=null; save();
+    if(moved) toast(`Premešteno u „${state.columns.find(c=>c.id===col).title}”`);
+  } else { drag=null; render(); }
+  suppressClick=true; setTimeout(()=>suppressClick=false,50);
+  if(remotePending&&!dirty){const r=remotePending;remotePending=null;applyRemote(r)}
+}
+
+/* ---------- board actions ---------- */
+board.addEventListener("click",e=>{
+  if(suppressClick) return;
+  const card=e.target.closest(".card"); if(card){openCard(card.dataset.id);return}
+  const add=e.target.closest(".add-card"); if(add){openCard(null,add.dataset.col);return}
+  const mv=e.target.closest(".lane-mv");
+  if(mv){const i=state.columns.findIndex(c=>c.id===mv.dataset.col), j=i+(+mv.dataset.d);
+    if(j<0||j>=state.columns.length) return;
+    [state.columns[i],state.columns[j]]=[state.columns[j],state.columns[i]]; save(); return}
+  if(e.target.closest("#addLane")){
+    if(readOnly) return;
+    state.columns.push({id:uid("c"),title:"Nova kolona"}); save();
+    requestAnimationFrame(()=>{const ins=board.querySelectorAll(".lane-title");const l=ins[ins.length-1];l.focus();l.select();board.scrollLeft=board.scrollWidth});
+    return;
+  }
+  const del=e.target.closest(".lane-del");
+  if(del){
+    const col=del.dataset.col, n=state.cards.filter(c=>c.col===col).length;
+    if(state.columns.length<=1){toast("Tabla mora imati bar jednu kolonu.");return}
+    if(!del.classList.contains("armed")){
+      del.classList.add("armed");
+      toast(n?`Klikni ponovo: briše kolonu i ${n} kartica`:"Klikni ponovo za brisanje kolone");
+      setTimeout(()=>{if(del.isConnected) del.classList.remove("armed")},3000);
+      return;
+    }
+    state.columns=state.columns.filter(c=>c.id!==col); state.cards=state.cards.filter(c=>c.col!==col); save(); toast("Kolona obrisana");
+  }
+});
+board.addEventListener("keydown",e=>{
+  const card=e.target.closest(".card");if(card&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openCard(card.dataset.id)}
+  if(e.target.classList.contains("lane-title")&&e.key==="Enter") e.target.blur();
+});
+board.addEventListener("input",e=>{
+  const t=e.target.closest(".lane-title"); if(!t) return;
+  const col=state.columns.find(c=>c.id===t.dataset.col);
+  if(col){col.title=t.value;save(true)}
+});
+board.addEventListener("change",e=>{
+  const t=e.target.closest(".lane-title"); if(!t) return;
+  if(!t.value.trim()){t.value="Bez naziva";t.dispatchEvent(new Event("input",{bubbles:true}))}
+});
+$("#boardTitle").addEventListener("input",e=>{state.title=e.target.value;save(true)});
+$("#boardTitle").addEventListener("keydown",e=>{if(e.key==="Enter")e.target.blur()});
+$("#boardTitle").addEventListener("change",e=>{if(!e.target.value.trim()){e.target.value="Moja CRM tabla";state.title=e.target.value;save(true)}});
+document.addEventListener("focusout",()=>setTimeout(()=>{
+  if(remotePending&&!dirty&&!writing&&!drag&&!$("#dlg").open&&!editingTitle()){const r=remotePending;remotePending=null;applyRemote(r)}
+},0));
+$("#q").addEventListener("input",render);
+
+/* ---------- card dialog ---------- */
+let editing=null, pickColor="sky";
+$("#sw").innerHTML=COLORS.map(([c,n])=>`<button type="button" class="sw" data-c="${c}" aria-pressed="false">${n}</button>`).join("");
+$("#sw").addEventListener("click",e=>{const b=e.target.closest(".sw");if(b){pickColor=b.dataset.c;paintSw()}});
+function paintSw(){$("#sw").querySelectorAll(".sw").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===pickColor))}
+function openCard(id,col){
+  const c=id?state.cards.find(x=>x.id===id):null; editing=id;
+  $("#dlgTitle").textContent=c?"Izmeni karticu":"Nova kartica";
+  $("#f-col").innerHTML=state.columns.map(k=>`<option value="${k.id}">${esc(k.title)}</option>`).join("");
+  $("#f-col").value=c?.col||col||state.columns[0].id;
+  $("#f-title").value=c?.title||""; $("#f-company").value=c?.company||"";
+  $("#f-phone").value=c?.phone||""; $("#f-email").value=c?.email||"";
+  $("#f-value").value=c?.value||""; $("#f-due").value=c?.due||""; $("#f-note").value=c?.note||"";
+  pickColor=c?.color||"sky"; paintSw(); closeEmoji();
+  const d=$("#del"); d.hidden=!c; d.classList.remove("armed"); d.textContent="Obriši karticu";
+  $("#dlg").showModal(); if(!c) $("#f-title").focus();
+}
+function closeDlg(){$("#dlg").close()}
+$("#dlg").addEventListener("close",()=>{closeEmoji();if(remotePending&&!dirty){const r=remotePending;remotePending=null;applyRemote(r)}});
+$("#cancel").addEventListener("click",closeDlg);
+$("#x").addEventListener("click",closeDlg);
+$("#form").addEventListener("submit",e=>{
+  e.preventDefault();
+  const v=parseInt(String($("#f-value").value).replace(/[^\d]/g,""),10);
+  const data={title:$("#f-title").value.trim(),company:$("#f-company").value.trim(),phone:$("#f-phone").value.trim(),
+    email:$("#f-email").value.trim(),value:isNaN(v)?0:v,due:$("#f-due").value,note:$("#f-note").value.trim(),color:pickColor};
+  const col=$("#f-col").value;
+  if(editing){
+    const c=state.cards.find(x=>x.id===editing);
+    if(!c){closeDlg();toast("Kartica više ne postoji.");return}
+    if(c.col!==col){state.cards=state.cards.filter(x=>x!==c);Object.assign(c,data,{col});state.cards.push(c)} else Object.assign(c,data);
+    toast("Kartica sačuvana");
+  } else { state.cards.push({id:uid("k"),col,...data,created:today()}); toast("Kartica dodata"); }
+  closeDlg(); save();
+});
+$("#del").addEventListener("click",e=>{
+  const b=e.currentTarget;
+  if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="Potvrdi brisanje";return}
+  state.cards=state.cards.filter(c=>c.id!==editing); closeDlg(); save(); toast("Kartica obrisana");
+});
+$("#newCard").addEventListener("click",()=>openCard(null));
+
+/* ---------- emoji picker ---------- */
+const EMOJI=["😀","😊","😎","🤝","👍","👎","🔥","⭐","💰","💵","📞","📧","📅","⏰","✅","❌","⚠️","❗","❓","🚀","🎯","📌","📝","🏆","🎉","😬","🙏","❤️","🟢","🟡","🔴","☕"];
+const PICT=/^\p{Extended_Pictographic}$/u, PRES=/^\p{Emoji_Presentation}$/u;
+function fromRanges(ranges){
+  const out=[];
+  for(const [a,b] of ranges) for(let cp=a;cp<=b;cp++){
+    const ch=String.fromCodePoint(cp);
+    if(PICT.test(ch)) out.push(PRES.test(ch)?ch:ch+"️");
+  }
+  return out;
+}
+const FACE_R=[[0x1F600,0x1F64F],[0x1F910,0x1F92F],[0x1F970,0x1F97F],[0x1FAE0,0x1FAEF]];
+const inR=(cp,rs)=>rs.some(([a,b])=>cp>=a&&cp<=b);
+const ISO="RS BA HR ME MK SI AL BG RO HU GR TR AT DE CH IT FR ES PT GB IE NL BE LU DK SE NO FI IS PL CZ SK UA BY RU LT LV EE MD CY MT US CA MX BR AR CL CO PE VE UY EC BO PY CU JM AU NZ JP CN KR IN PK BD ID TH VN PH MY SG IL AE SA QA KW IR IQ SY LB JO EG MA DZ TN LY NG GH KE ZA ET SN CI CM TZ UG AO MZ ZW AF AM AZ GE KZ UZ TM KG TJ MN NP LK MM KH LA TW HK MO KP AD MC SM VA LI XK EU UN".split(" ");
+const flag=c=>String.fromCodePoint(...[...c].map(ch=>0x1F1E6+ch.charCodeAt(0)-65));
+const CATS=[
+  ["Česti",()=>{let r=[];try{r=JSON.parse(localStorage.getItem("crm-emoji-recent")||"[]")}catch(_){};return [...new Set([...r,...EMOJI])]}],
+  ["Lica",()=>fromRanges(FACE_R)],
+  ["Ljudi i stvari",()=>fromRanges([[0x1F400,0x1F4FF]])],
+  ["Priroda i hrana",()=>fromRanges([[0x1F300,0x1F3FF]])],
+  ["Predmeti",()=>fromRanges([[0x1F500,0x1F5FF]])],
+  ["Prevoz",()=>fromRanges([[0x1F680,0x1F6FF]])],
+  ["Dodatni",()=>fromRanges([[0x1F900,0x1F9FF],[0x1FA70,0x1FAFF]]).filter(e=>!inR(e.codePointAt(0),FACE_R))],
+  ["Simboli",()=>[...fromRanges([[0x2190,0x21FF],[0x2300,0x23FF],[0x24C2,0x24C2],[0x25A0,0x27BF],[0x2934,0x2935],[0x2B00,0x2BFF],[0x3030,0x3030],[0x303D,0x303D],[0x3297,0x3299],[0x1F100,0x1F2FF],[0x1F7E0,0x1F7EB],[0x203C,0x2049],[0x2122,0x2139]]),..."0123456789#*".split("").map(c=>c+"️⃣")]],
+  ["Zastave",()=>["🏳️","🏴","🏁","🚩","🏳️‍🌈",...ISO.map(flag)]]
+];
+let emoCat=0, emoFor=null;
+const pop=$("#emoPop");
+function renderEmo(){
+  $("#emoTabs").innerHTML=CATS.map(([n],i)=>`<button type="button" class="emo-tab" role="tab" data-i="${i}" aria-selected="${i===emoCat}">${n}</button>`).join("");
+  $("#emo").innerHTML=CATS[emoCat][1]().map(e=>`<button type="button" class="emo" aria-label="Ubaci ${e}">${e}</button>`).join("");
+  $("#emo").scrollTop=0;
+}
+function resolveTarget(){
+  if(!emoFor) return null;
+  if(emoFor.id) return document.getElementById(emoFor.id);
+  return board.querySelector(`.lane-title[data-col="${emoFor.col}"]`);
+}
+function openEmoji(btn){
+  const next=btn.dataset.for?{id:btn.dataset.for}:{col:btn.dataset.col};
+  if(!pop.hidden&&JSON.stringify(next)===JSON.stringify(emoFor)){closeEmoji();return}
+  emoFor=next; (btn.closest("dialog")||document.body).appendChild(pop);
+  pop.hidden=false; renderEmo();
+  const r=btn.getBoundingClientRect(), pw=pop.offsetWidth, ph=pop.offsetHeight;
+  let top=r.bottom+6; if(top+ph>innerHeight-8) top=Math.max(8,r.top-ph-6);
+  pop.style.top=top+"px"; pop.style.left=Math.max(8,Math.min(r.right-pw,innerWidth-pw-8))+"px";
+  const f=resolveTarget(); if(f&&document.activeElement!==f&&matchMedia("(pointer:fine)").matches){f.focus();try{f.setSelectionRange(f.value.length,f.value.length)}catch(_){}}
+}
+function closeEmoji(){pop.hidden=true;emoFor=null}
+document.addEventListener("mousedown",e=>{if(e.target.closest(".emo-btn"))e.preventDefault()});
+document.addEventListener("click",e=>{const b=e.target.closest(".emo-btn");if(b){e.stopPropagation();e.preventDefault();openEmoji(b)}},true);
+document.addEventListener("pointerdown",e=>{if(!pop.hidden&&!e.target.closest("#emoPop")&&!e.target.closest(".emo-btn"))closeEmoji()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!pop.hidden){e.preventDefault();e.stopPropagation();closeEmoji()}},true);
+board.addEventListener("scroll",()=>{if(emoFor?.col)closeEmoji()});
+$("#emoTabs").addEventListener("mousedown",e=>e.preventDefault());
+$("#emoTabs").addEventListener("click",e=>{const t=e.target.closest(".emo-tab");if(t){emoCat=+t.dataset.i;renderEmo()}});
+$("#emo").addEventListener("mousedown",e=>{if(e.target.closest(".emo"))e.preventDefault()});
+$("#emo").addEventListener("click",e=>{
+  const b=e.target.closest(".emo"); if(!b) return;
+  const f=resolveTarget(); if(!f) return; const em=b.textContent;
+  const s=f.selectionStart??f.value.length, en=f.selectionEnd??f.value.length;
+  f.value=f.value.slice(0,s)+em+f.value.slice(en);
+  f.focus(); const p=s+em.length; try{f.setSelectionRange(p,p)}catch(_){}
+  f.dispatchEvent(new Event("input",{bubbles:true}));
+  try{const r=JSON.parse(localStorage.getItem("crm-emoji-recent")||"[]").filter(x=>x!==em);r.unshift(em);localStorage.setItem("crm-emoji-recent",JSON.stringify(r.slice(0,24)))}catch(_){}
+});
+
+init();
+</script>
+</body>
+</html>
