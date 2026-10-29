@@ -105,7 +105,7 @@ svg.i{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .lane:hover .lane-del,.lane:hover .lane-head .emo-btn,.lane-head :focus-visible{opacity:1}
 @media (hover:none){.lane-head .lane-del,.lane-head .emo-btn{opacity:1}}
 .lane-sum{padding:8px 0 4px;font:400 .72rem var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums;min-height:6px}
-.list{flex:1;min-height:44px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:6px 2px 10px}
+.list{flex:1 1 auto;min-height:44px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;display:flex;flex-direction:column;gap:10px;padding:6px 2px 10px}
 .empty{font-size:.8rem;color:var(--faint);border:1px dashed var(--line-strong);border-radius:4px;padding:18px 10px;text-align:center}
 .lane-foot{display:flex;align-items:center;gap:2px}
 .add-card{flex:1;display:flex;align-items:center;gap:7px;border:0;background:transparent;text-align:left;padding:6px 0;color:var(--faint);font-weight:500;font-size:.84rem}
@@ -117,7 +117,7 @@ svg.i{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .add-lane:hover{color:var(--fg);border-bottom-color:var(--fg)}
 
 /* ---- cards ---- */
-.card{position:relative;background:var(--raised);border:1px solid var(--line);border-radius:4px;padding:14px 14px 13px 16px;box-shadow:var(--shadow-card);cursor:grab;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.card{flex:0 0 auto;position:relative;-webkit-touch-callout:none;background:var(--raised);border:1px solid var(--line);border-radius:4px;padding:14px 14px 13px 16px;box-shadow:var(--shadow-card);cursor:grab;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;gap:8px;overflow:hidden}
 .card:hover{border-color:var(--line-strong);box-shadow:var(--shadow-hover)}
 .label{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:0;background:transparent}
 .label[data-c="sun"]{background:var(--l-sun)}.label[data-c="mint"]{background:var(--l-mint)}.label[data-c="sky"]{background:var(--l-sky)}
@@ -127,7 +127,34 @@ svg.i{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .who{min-width:0;flex:1;padding-right:18px}
 .card h3{margin:0;font:500 1.02rem/1.3 var(--f-display);letter-spacing:-.005em;overflow-wrap:anywhere}
 .card .co{font-size:.78rem;color:var(--muted);overflow-wrap:anywhere;margin-top:1px}
-.card .note{font-size:.82rem;line-height:1.5;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card .note{font-size:.82rem;line-height:1.5;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
+.card.active{border-color:var(--fg)}
+.chip{min-width:0;overflow-wrap:anywhere}
+
+/* ---- side panel ---- */
+.side{position:fixed;top:0;right:0;bottom:0;z-index:40;width:min(420px,100vw);background:var(--surface);border-left:1px solid var(--line);box-shadow:var(--shadow-pop);display:flex;flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.side-head{display:flex;align-items:flex-start;gap:6px;padding:22px 20px 14px 24px;border-bottom:1px solid var(--line)}
+.side-head .ttl{flex:1;min-width:0}
+.side-head h2{margin:0;font:500 1.45rem/1.2 var(--f-display);letter-spacing:-.01em;overflow-wrap:anywhere}
+.side-cat{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.side-cat .dot{margin:0}
+.side-edit{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);background:transparent;border-radius:999px;padding:6px 12px;font-size:.8rem;font-weight:500;color:var(--fg);flex:none}
+.side-edit:hover{border-color:var(--fg)}
+.side-body{flex:1;overflow-y:auto;padding:8px 24px 24px;display:flex;flex-direction:column}
+.side-row{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.side-row dt{font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.side-row dd{margin:0;min-width:0;overflow-wrap:anywhere;font-size:.92rem;user-select:text;-webkit-user-select:text}
+.side-row dd.mono{font-family:var(--f-mono);font-size:.86rem;font-variant-numeric:tabular-nums}
+.side-row dd .none{color:var(--faint)}
+.side-row dd .late{color:var(--danger);font-weight:600}
+.copy{border:0;background:transparent;color:var(--faint);font-size:.72rem;margin-left:8px;padding:2px 6px;border-radius:999px}
+.copy:hover{color:var(--fg);background:var(--accent-soft)}
+.side-note{padding:16px 0 0}
+.side-note h3{margin:0 0 8px;font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.side-note p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.94rem;line-height:1.6;user-select:text;-webkit-user-select:text}
+@media (max-width:480px){.side-row{grid-template-columns:1fr;gap:2px}.side-head{padding-left:18px}.side-body{padding-inline:18px}}
+@media (prefers-reduced-motion:no-preference){.side:not([hidden]){animation:slide .2s ease-out}@keyframes slide{from{transform:translateX(24px);opacity:0}}}
 .meta{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;font-size:.74rem;color:var(--muted);padding-top:8px;border-top:1px solid var(--line)}
 .chip{display:inline-flex;align-items:center;gap:5px;font-variant-numeric:tabular-nums}
 .chip svg.i{width:12px;height:12px;color:var(--faint)}
@@ -138,8 +165,18 @@ svg.i{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .grip{position:absolute;top:10px;right:8px;width:22px;height:22px;display:grid;place-items:center;color:var(--faint);touch-action:none;cursor:grab;border-radius:3px;font-size:.85rem;opacity:0}
 .card:hover .grip{opacity:1}
 @media (hover:none){.grip{opacity:.7}}
+.card-tools{position:absolute;top:6px;right:32px;display:flex;gap:1px;padding:2px;background:var(--raised);border:1px solid var(--line);border-radius:999px;opacity:0;pointer-events:none;transition:opacity .15s}
+.card:hover .card-tools,.card:focus-within .card-tools{opacity:1;pointer-events:auto}
+.card-mv{border:0;background:transparent;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:var(--fg);font-size:.9rem;font-weight:600;line-height:1}
+.card-mv:hover{background:var(--accent-soft);color:var(--fg)}
+.card-mv:disabled{opacity:.25;cursor:default;background:transparent}
+@media (hover:none){.card-tools{position:static;opacity:1;pointer-events:auto;align-self:flex-end;margin:-2px -4px -4px 0}.card-mv{width:34px;height:34px;font-size:1rem}}
+.co{display:flex;align-items:center;gap:4px}
+.co svg.i{width:12px;height:12px;color:var(--faint)}
 .card.ghost{position:fixed;z-index:50;pointer-events:none;transform:rotate(1.5deg);box-shadow:0 16px 40px rgba(0,0,0,.14);cursor:grabbing}
-.placeholder{border-radius:4px;background:var(--accent-soft);border:1px dashed var(--line-strong)}
+.lane.drop-target .list{background:var(--accent-soft);border-radius:6px}
+.lane.drop-target .lane-head{border-bottom-color:var(--fg)}
+.placeholder{flex:0 0 auto;border-radius:4px;background:var(--accent-soft);border:1px dashed var(--line-strong)}
 .hidden-src{display:none!important}
 .dim{opacity:.25}
 
@@ -195,7 +232,7 @@ textarea.fld:focus{border-color:var(--accent)}
     <span id="sync" class="sync busy">Učitavanje…</span>
   </div>
   <div class="tools">
-    <label class="search" aria-label="Pretraga"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Pretraži klijente i beleške"></label>
+    <label class="search" aria-label="Pretraga"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Pretraži klijente, lokacije, beleške"></label>
     <button id="newCard" class="btn primary" type="button">Nova kartica</button>
   </div>
 </header>
@@ -209,8 +246,8 @@ textarea.fld:focus{border-color:var(--accent)}
       <div class="sec">Klijent</div>
       <label>Ime / naslov<span class="fwrap"><input id="f-title" class="fld" required maxlength="120" placeholder="npr. Marko Petrović"><button type="button" class="emo-btn" data-for="f-title" title="Dodaj smajli" aria-label="Dodaj smajli">😊</button></span></label>
       <div class="row">
-        <label>Firma<span class="fwrap"><input id="f-company" class="fld" maxlength="120"><button type="button" class="emo-btn" data-for="f-company" title="Dodaj smajli" aria-label="Dodaj smajli">😊</button></span></label>
-        <label>Faza<select id="f-col" class="fld"></select></label>
+        <label>Lokacija<span class="fwrap"><input id="f-company" class="fld" maxlength="120" placeholder="npr. Novi Sad"><button type="button" class="emo-btn" data-for="f-company" title="Dodaj smajli" aria-label="Dodaj smajli">😊</button></span></label>
+        <label>Kategorija<select id="f-col" class="fld"></select></label>
       </div>
       <div class="row">
         <label>Telefon<input id="f-phone" class="fld" inputmode="tel" maxlength="40" placeholder="06x xxx xxxx"></label>
@@ -231,6 +268,14 @@ textarea.fld:focus{border-color:var(--accent)}
     </div>
   </form>
 </dialog>
+<aside id="side" class="side" hidden aria-label="Detalji kartice">
+  <div class="side-head">
+    <div class="ttl"><h2 id="sideTitle"></h2><div class="side-cat" id="sideCat"></div></div>
+    <button type="button" class="side-edit" id="sideEdit" title="Izmeni karticu"><svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/></svg>Izmeni</button>
+    <button type="button" class="icon-btn" id="sideClose" aria-label="Zatvori" title="Zatvori"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="side-body" id="sideBody"></div>
+</aside>
 <div id="toast" class="toast" hidden></div>
 <div id="emoPop" class="emo-pop" hidden><div class="emo-tabs" id="emoTabs" role="tablist"></div><div class="emojis" id="emo"></div></div>
 
@@ -255,6 +300,7 @@ const I={
   cal:'<svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   phone:'<svg class="i" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
   mail:'<svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+  pin:'<svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
   plus:'<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
   trash:'<svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>'
 };
@@ -363,6 +409,7 @@ function render(){
   b.innerHTML=html; b.scrollLeft=sx;
   b.querySelectorAll(".list").forEach(l=>{if(scrolls[l.dataset.col]) l.scrollTop=scrolls[l.dataset.col]});
   renderKpis();
+  renderSide();
 }
 function cardHTML(c,q){
   const t=today(), late=c.due&&c.due<t, soon=c.due&&!late&&c.due<=inDays(2);
@@ -370,33 +417,55 @@ function cardHTML(c,q){
   if(+c.value) meta.push(`<span class="chip money">${fmtRSD(+c.value)}</span>`);
   if(c.due) meta.push(`<span class="chip ${late?"late":soon?"soon":""}">${I.cal}${late?"Kasni · ":c.due===t?"Danas · ":""}${fmtDate(c.due)}</span>`);
   if(c.phone) meta.push(`<span class="chip">${I.phone}${esc(c.phone)}</span>`);
-  else if(c.email) meta.push(`<span class="chip">${I.mail}${esc(c.email)}</span>`);
+  if(c.email) meta.push(`<span class="chip">${I.mail}${esc(c.email)}</span>`);
   const col=c.color&&c.color!=="paper"?c.color:null;
-  return `<article class="card ${matches(c,q)?"":"dim"}" data-id="${c.id}" tabindex="0">
+  const same=state.cards.filter(x=>x.col===c.col), pos=same.indexOf(c), ci=state.columns.findIndex(k=>k.id===c.col);
+  const tools=readOnly?"":`<div class="card-tools">
+      <button type="button" class="card-mv" data-mv="up" title="Pomeri gore" aria-label="Pomeri gore" ${pos<=0?"disabled":""}>↑</button>
+      <button type="button" class="card-mv" data-mv="down" title="Pomeri dole" aria-label="Pomeri dole" ${pos>=same.length-1?"disabled":""}>↓</button>
+      <button type="button" class="card-mv" data-mv="left" title="U prethodnu kategoriju" aria-label="U prethodnu kategoriju" ${ci<=0?"disabled":""}>←</button>
+      <button type="button" class="card-mv" data-mv="right" title="U sledeću kategoriju" aria-label="U sledeću kategoriju" ${ci>=state.columns.length-1?"disabled":""}>→</button></div>`;
+  return `<article class="card ${matches(c,q)?"":"dim"} ${c.id===sideId?"active":""}" data-id="${c.id}" tabindex="0">
     <span class="grip" aria-hidden="true">⠿</span>
     ${col?`<span class="label" data-c="${col}"></span>`:""}
     <div class="card-top"><span class="avatar">${esc(initials(c.title))}</span>
-      <div class="who"><h3>${esc(c.title)}</h3>${c.company?`<div class="co">${esc(c.company)}</div>`:""}</div></div>
+      <div class="who"><h3>${esc(c.title)}</h3>${c.company?`<div class="co">${I.pin}${esc(c.company)}</div>`:""}</div></div>
     ${c.note?`<div class="note">${esc(c.note)}</div>`:""}
     ${meta.length?`<div class="meta">${meta.join("")}</div>`:""}
+    ${tools}
   </article>`;
 }
 
 /* ---------- drag & drop ---------- */
 let drag=null, press=null, suppressClick=false;
 const board=$("#board");
+let lpTimer=null;
 board.addEventListener("pointerdown",e=>{
-  const card=e.target.closest(".card"); if(!card||e.button>0||readOnly) return;
-  if(e.pointerType!=="mouse"&&!e.target.closest(".grip")) return;
-  press={id:card.dataset.id,el:card,x:e.clientX,y:e.clientY,pid:e.pointerId};
-  if(e.pointerType!=="mouse") e.preventDefault();
+  const card=e.target.closest(".card"); if(!card||(e.pointerType==="mouse"&&e.button>0)||readOnly||e.target.closest(".card-tools")||drag) return;
+  press={id:card.dataset.id,el:card,x:e.clientX,y:e.clientY,lx:e.clientX,ly:e.clientY,pid:e.pointerId,
+    instant:e.pointerType==="mouse"||!!e.target.closest(".grip"),touch:e.pointerType!=="mouse"};
+  if(press.touch&&!press.instant){
+    // dodir: zadrži prst ~0,35 s na kartici pa prevuci
+    clearTimeout(lpTimer);
+    lpTimer=setTimeout(()=>{ if(press&&!drag){ try{navigator.vibrate?.(15)}catch(_){} startDrag({clientX:press.lx,clientY:press.ly}); } },350);
+  }
+  if(press.touch&&press.instant) e.preventDefault();
 });
 window.addEventListener("pointermove",e=>{
-  if(press&&!drag&&e.pointerId===press.pid&&Math.hypot(e.clientX-press.x,e.clientY-press.y)>5) startDrag(e);
+  if(!press||e.pointerId!==press.pid){ if(drag) moveDrag(e); return; }
+  press.lx=e.clientX; press.ly=e.clientY;
+  const dist=Math.hypot(e.clientX-press.x,e.clientY-press.y);
+  if(!drag){
+    if(press.instant&&dist>5) startDrag(e);
+    else if(!press.instant&&dist>8){clearTimeout(lpTimer);press=null} // korisnik skroluje
+  }
   if(drag) moveDrag(e);
 });
-window.addEventListener("pointerup",()=>{ if(drag) endDrag(true); press=null; });
-window.addEventListener("pointercancel",()=>{ if(drag) endDrag(false); press=null; });
+// dok se kartica prevlači prstom, ne skroluj stranicu
+window.addEventListener("touchmove",e=>{ if(drag&&e.cancelable) e.preventDefault(); },{passive:false});
+board.addEventListener("contextmenu",e=>{ if(e.target.closest(".card")) e.preventDefault(); });
+window.addEventListener("pointerup",()=>{ clearTimeout(lpTimer); if(drag) endDrag(true); press=null; });
+window.addEventListener("pointercancel",()=>{ clearTimeout(lpTimer); if(drag) endDrag(true); press=null; });
 function startDrag(e){
   const el=press.el, r=el.getBoundingClientRect();
   const ghost=el.cloneNode(true); ghost.classList.add("ghost"); ghost.style.width=r.width+"px";
@@ -410,7 +479,16 @@ function startDrag(e){
 function moveDrag(e){
   const {ghost,ph}=drag;
   ghost.style.left=(e.clientX-drag.dx)+"px"; ghost.style.top=(e.clientY-drag.dy)+"px";
-  const lane=document.elementFromPoint(e.clientX,e.clientY)?.closest(".lane"); if(!lane){autoScroll(e);return}
+  // kolona se bira po horizontalnoj poziciji, pa radi i kad pustiš ispod kartica ili između kolona
+  let lane=null, best=Infinity;
+  for(const l of board.querySelectorAll(".lane")){
+    const r=l.getBoundingClientRect();
+    const d=e.clientX<r.left?r.left-e.clientX:e.clientX>r.right?e.clientX-r.right:0;
+    if(d<best){best=d;lane=l}
+  }
+  if(!lane){autoScroll(e);return}
+  board.querySelectorAll(".lane.drop-target").forEach(l=>{if(l!==lane)l.classList.remove("drop-target")});
+  lane.classList.add("drop-target");
   const list=lane.querySelector(".list");
   list.querySelector(".empty")?.remove();
   let before=null;
@@ -426,6 +504,7 @@ function autoScroll(e){
 }
 function endDrag(commit){
   const {id,ghost,ph}=drag; ghost.remove(); document.body.style.cursor="";
+  board.querySelectorAll(".lane.drop-target").forEach(l=>l.classList.remove("drop-target"));
   if(commit&&ph.parentElement){
     const col=ph.parentElement.dataset.col;
     const nextCard=ph.nextElementSibling?.closest?.(".card");
@@ -445,7 +524,8 @@ function endDrag(commit){
 /* ---------- board actions ---------- */
 board.addEventListener("click",e=>{
   if(suppressClick) return;
-  const card=e.target.closest(".card"); if(card){openCard(card.dataset.id);return}
+  const cm=e.target.closest(".card-mv"); if(cm){moveCard(cm.closest(".card").dataset.id,cm.dataset.mv);return}
+  const card=e.target.closest(".card"); if(card){openSide(card.dataset.id);return}
   const add=e.target.closest(".add-card"); if(add){openCard(null,add.dataset.col);return}
   const mv=e.target.closest(".lane-mv");
   if(mv){const i=state.columns.findIndex(c=>c.id===mv.dataset.col), j=i+(+mv.dataset.d);
@@ -470,8 +550,24 @@ board.addEventListener("click",e=>{
     state.columns=state.columns.filter(c=>c.id!==col); state.cards=state.cards.filter(c=>c.col!==col); save(); toast("Kolona obrisana");
   }
 });
+function moveCard(id,dir){
+  if(readOnly) return;
+  const c=state.cards.find(x=>x.id===id); if(!c) return;
+  if(dir==="up"||dir==="down"){
+    const same=state.cards.filter(x=>x.col===c.col), p=same.indexOf(c), o=same[dir==="up"?p-1:p+1]; if(!o) return;
+    const i=state.cards.indexOf(c), j=state.cards.indexOf(o); state.cards[i]=o; state.cards[j]=c;
+  } else {
+    const ci=state.columns.findIndex(k=>k.id===c.col), nc=state.columns[dir==="left"?ci-1:ci+1]; if(!nc) return;
+    state.cards=state.cards.filter(x=>x!==c); c.col=nc.id; state.cards.push(c);
+    toast(`Prebačeno u „${nc.title}”`);
+  }
+  save();
+  requestAnimationFrame(()=>{const el=board.querySelector(`.card[data-id="${id}"]`); if(el){el.scrollIntoView({block:"nearest",inline:"nearest"}); el.focus({preventScroll:true})}});
+}
 board.addEventListener("keydown",e=>{
-  const card=e.target.closest(".card");if(card&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openCard(card.dataset.id)}
+  const card=e.target.closest(".card");
+  if(card&&e.target===card&&e.altKey&&e.key.startsWith("Arrow")){e.preventDefault();moveCard(card.dataset.id,e.key.slice(5).toLowerCase());return}
+  if(card&&e.target===card&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openSide(card.dataset.id)}
   if(e.target.classList.contains("lane-title")&&e.key==="Enter") e.target.blur();
 });
 board.addEventListener("input",e=>{
@@ -586,6 +682,39 @@ document.addEventListener("mousedown",e=>{if(e.target.closest(".emo-btn"))e.prev
 document.addEventListener("click",e=>{const b=e.target.closest(".emo-btn");if(b){e.stopPropagation();e.preventDefault();openEmoji(b)}},true);
 document.addEventListener("pointerdown",e=>{if(!pop.hidden&&!e.target.closest("#emoPop")&&!e.target.closest(".emo-btn"))closeEmoji()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!pop.hidden){e.preventDefault();e.stopPropagation();closeEmoji()}},true);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&sideId&&!$("#dlg").open&&pop.hidden){closeSide()}});
+
+/* ---------- side panel ---------- */
+var sideId=null;
+function openSide(id){sideId=id; $("#side").hidden=false; render(); $("#sideEdit").focus({preventScroll:true});}
+function closeSide(){const id=sideId; sideId=null; $("#side").hidden=true; render(); board.querySelector(`.card[data-id="${id}"]`)?.focus({preventScroll:true});}
+function renderSide(){
+  if(!sideId) return;
+  const c=state.cards.find(x=>x.id===sideId); if(!c){sideId=null;$("#side").hidden=true;return}
+  const ci=state.columns.findIndex(k=>k.id===c.col), col=state.columns[ci];
+  $("#sideTitle").textContent=c.title||"Bez naziva";
+  $("#sideCat").innerHTML=`<span class="dot" style="background:var(${STATUS[Math.max(0,ci)%STATUS.length]})"></span>${esc(col?.title||"")}`;
+  const none='<span class="none">—</span>', t=today();
+  const lbl=Object.fromEntries(COLORS);
+  const rows=[
+    ["Lokacija",c.company?esc(c.company):none],
+    ["Telefon",c.phone?`${esc(c.phone)}<button type="button" class="copy" data-copy="${esc(c.phone)}">Kopiraj</button>`:none,"mono"],
+    ["Email",c.email?`${esc(c.email)}<button type="button" class="copy" data-copy="${esc(c.email)}">Kopiraj</button>`:none],
+    ["Vrednost",+c.value?fmtRSD(+c.value):none,"mono"],
+    ["Rok",c.due?`<span class="${c.due<t?"late":""}">${c.due<t?"Kasni · ":c.due===t?"Danas · ":""}${fmtDate(c.due)}</span>`:none,"mono"],
+    ["Oznaka",lbl[c.color||"paper"]||lbl.paper],
+    ...(c.created?[["Dodato",fmtDate(c.created),"mono"]]:[])
+  ];
+  $("#sideBody").innerHTML=`<dl style="margin:0">${rows.map(([k,v,cls])=>`<div class="side-row"><dt>${k}</dt><dd class="${cls||""}">${v}</dd></div>`).join("")}</dl>
+    <div class="side-note"><h3>Beleška</h3><p>${c.note?esc(c.note):'<span style="color:var(--faint)">Nema beleške.</span>'}</p></div>`;
+}
+$("#sideClose").addEventListener("click",closeSide);
+$("#sideEdit").addEventListener("click",()=>{if(sideId)openCard(sideId)});
+$("#sideBody").addEventListener("click",e=>{
+  const b=e.target.closest(".copy"); if(!b) return;
+  const txt=b.dataset.copy;
+  navigator.clipboard?.writeText(txt).then(()=>toast("Kopirano"),()=>{const r=document.createRange();r.selectNodeContents(b.parentElement.firstChild);const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Označeno, pritisni Ctrl+C")});
+});
 board.addEventListener("scroll",()=>{if(emoFor?.col)closeEmoji()});
 $("#emoTabs").addEventListener("mousedown",e=>e.preventDefault());
 $("#emoTabs").addEventListener("click",e=>{const t=e.target.closest(".emo-tab");if(t){emoCat=+t.dataset.i;renderEmo()}});
